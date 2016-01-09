@@ -75,10 +75,10 @@ object.startFrom = function(string, pos) { // a function to break down a string 
                 curString = curString.chunk(curString.indexOf(string) + 2, curString.length);
                 strCheck();
             }
-            else if(pos != "last" && typeof pos === "number") {
+            else if(pos != "last" && typeof pos === "number" && pos != 0) {
                 curString = curString.chunk(curString.indexOf(string) + 2, curString.length);
                 curPos += 1;
-                if(curPos != 1) {
+                if(curPos != pos) {
                     strCheck();
                 }
             }
