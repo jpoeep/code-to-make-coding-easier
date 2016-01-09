@@ -62,6 +62,34 @@ object.chunk = function(pos1, pos2) {
     return str;
 }
 
+object.startFrom = function(string, pos) { // a function to break down a string in segments based off of string arg
+    var curString = this;
+    var curPos = 0;
+    if(!pos) {
+        pos = "last";
+    }
+                    
+    function strCheck() {
+        if(string.within(curString) == true) {
+            if(pos === "last") {
+                curString = curString.chunk(curString.indexOf(string) + 2, curString.length);
+                strCheck();
+            }
+            else if(pos != "last" && typeof pos === "number") {
+                curString = curString.chunk(curString.indexOf(string) + 2, curString.length);
+                curPos += 1;
+                if(curPos != 1) {
+                    strCheck();
+                }
+            }
+        }
+    }
+                    
+    strCheck();
+                    
+    return curString;
+}
+
 function $(targetName) {
     var begin = targetName.chunk(1, 1);
     var rest = targetName.chunk(2, targetName.length);
@@ -92,4 +120,17 @@ function ElementNode(tagName, func) {
             clearInterval(tagCheck);
         }
     }, 0);
+}
+
+function pull(url) {
+    var ext = url.startFrom(".");
+    var pullEnt;
+    if(ext === "js") {
+        pullEnt = $("body").create("script");
+        pullEnt.src = url;
+    }
+    if(ext === "css") {
+        pullEnt = $("body").create("link");
+        pullEnt.href = url;
+    }
 }
