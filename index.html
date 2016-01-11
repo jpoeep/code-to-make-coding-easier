@@ -1,9 +1,11 @@
 <html>
   <body>
     <script>
-      window.onmessage = function(e) {
+      function processMessage(e) {
         document.body.textContent = e.data;
       }
+      
+      window.addEventListener("message", processMessage);
     </script>
   </body>
 </html>
