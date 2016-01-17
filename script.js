@@ -90,6 +90,14 @@ object.startAfter = function(string, pos) { // a function to break down a string
     return curString;
 }
 
+function update(oldFunc, newFunc) {
+    if(oldFunc) {
+        oldFunc = newFunc; // sets old function to the updated and changed iteration
+    }
+}
+
+update(object.startFrom, object.startAfter);
+
 function $(targetName) {
     var begin = targetName.chunk(1, 1);
     var rest = targetName.chunk(2, targetName.length);
