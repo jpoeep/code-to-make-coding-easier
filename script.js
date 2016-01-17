@@ -62,7 +62,7 @@ object.chunk = function(pos1, pos2) {
     return str;
 }
 
-object.startFrom = function(string, pos) { // a function to break down a string in segments based off of string arg
+object.startAfter = function(string, pos) { // a function to break down a string in segments based off of string arg
     var curString = this;
     var curPos = 0;
     if(!pos) {
@@ -123,7 +123,7 @@ function ElementNode(tagName, func) {
 }
 
 function pull(url) {
-    var ext = url.startFrom(".");
+    var ext = url.startAfter(".");
     var pullEnt;
     if(ext === "js") {
         pullEnt = $("body").create("script");
@@ -133,4 +133,14 @@ function pull(url) {
         pullEnt = $("body").create("link");
         pullEnt.href = url;
     }
+}
+
+object.forceClick = function() {
+    var clickDummy = $("body").create("dummyDiv");
+    
+    clickDummy.onclick = function() {
+        this.click();
+    }
+    
+    clickDummy.click();
 }
