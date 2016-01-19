@@ -142,13 +142,3 @@ function pull(url) {
         pullEnt.href = url;
     }
 }
-
-object.forceClick = function() {
-    var clickDummy = $("body").create("dummyDiv");
-    
-    clickDummy.onclick = function() {
-        this.click();
-    }
-    
-    clickDummy.click();
-}
