@@ -98,23 +98,25 @@ function update(oldFunc, newFunc) {
 
 update(object.startFrom, object.startAfter);
 
-function $(targetName) {
+function $(targetName, elementNum) {
     var begin = targetName.chunk(1, 1);
     var rest = targetName.chunk(2, targetName.length);
-    var obj;
-    switch(begin) {
-        default:
-            var amount = document.getElementsByTagName(targetName);
-            obj = amount[amount.length - 1];
-            break;
-        case ".":
-            var classAmount = document.getElementsByClassName(rest);
-            obj = classAmount[classAmount.length - 1];
-            break;
-        case "#":
-            obj = document.getElementById(rest);
-            break;
+    var methodType;
+    if(!elementNum) {
+        elementNum = 0;
     }
+    if(begin === "#") {
+        methodType = "getElementById(rest)";
+    }
+    if(begin === ".") {
+        methodType = "getElementsByClassName(rest)";
+    }
+    else {
+        methodType = "getElementsByTagName(targetName)";
+    }
+    var amount = eval("document." + methodType);
+    obj = amount[elementNum];
+    obj.length = amount.length;
     return obj;
 }
 
