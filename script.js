@@ -35,27 +35,25 @@ object.on = function(event) {
 }
 
 object.within = function(parentString, caseSensitive) {
+    var index;
     if(caseSensitive == true) {
-        if(parentString.indexOf(this) > -1) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        index = parentString.indexOf(this);
     }
     else {
-        if(parentString.toLowerCase().indexOf(this.toLowerCase()) > -1) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        index = parentString.toLowerCase().indexOf(this.toLowerCase());
+    }
+    if(index > -1) {
+        return true;
+    }
+    else {
+        return false;
     }
 }
 
 object.chunk = function(pos1, pos2) {
     var str = "";
     pos1 -= 1;
+    pos2 -= 1;
     for(var i = pos1; i < pos2; i++) {
         str += this[i];
     }
@@ -96,38 +94,52 @@ function update(oldFunc, newFunc) {
     }
 }
 
-update(object.startFrom, object.startAfter);
+update(startFrom, startAfter);
 
-function $(targetName, elementNum) {
+function $(targetName) {
     var begin = targetName.chunk(1, 1);
-    var rest = targetName.chunk(2, targetName.length);
-    var methodType;
-    if(!elementNum) {
-        elementNum = 0;
-    }
+    var end = targetName.chunk(2, targetName.length);
+    var obj;
+    
     if(begin === "#") {
-        methodType = "getElementById(rest)";
+        obj = document.getElementById(end);
     }
-    if(begin === ".") {
-        methodType = "getElementsByClassName(rest)";
+    else if(begin === ".") {
+        obj = document.getElementsByClassName(end);
     }
     else {
-        methodType = "getElementsByTagName(targetName)";
+        obj = document.getElementsByTagName(targetName);
     }
-    var amount = eval("document." + methodType);
-    obj = amount[elementNum];
-    obj.length = amount.length;
+    
     return obj;
 }
 
+function loop(func, delay) {
+    delay *= 1000;
+    
+    function action() {
+        func();
+        
+        setTimeout(action, delay);
+    }
+    
+    action();
+    
+    action.stop = function() {
+        action = null;
+    }
+    
+    return action;
+}
+
 function ElementNode(tagName, func) {
-    var tagCheck = setInterval(function() {
+    var tagCheck = loop(function() {
         var tag = document.getElementsByTagName(tagName);
         if(tag.length) {
             for(var i = 0; i < tag.length; i++) {
                 func(tag[i]);
             }
-            clearInterval(tagCheck);
+            tagCheck.stop();
         }
     }, 0);
 }
