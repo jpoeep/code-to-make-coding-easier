@@ -35,18 +35,11 @@ object.on = function(event) {
 }
 
 object.within = function(parentString, caseSensitive) {
-    var index;
     if(caseSensitive == true) {
-        index = parentString.indexOf(this);
+        return this === parentString;
     }
-    else {
-        index = parentString.toLowerCase().indexOf(this.toLowerCase());
-    }
-    if(index > -1) {
-        return true;
-    }
-    else {
-        return false;
+    else if(caseSensitive == (false || null)) {
+        return this.toLowerCase() === parentString.toLowerCase();
     }
 }
 
@@ -154,5 +147,22 @@ function pull(url) {
     if(ext === "css") {
         pullEnt = $("body").create("link");
         pullEnt.href = url;
+    }
+}
+
+object.centerTo = function(x, y) { //align center of element to 
+    if(this.position != (null || "static")) {
+        var width = parseInt(this.css("width"));
+        var height = parseInt(this.css("height"));
+        
+        if(width == null) {
+            width = this.clientWidth;
+        }
+        if(height == null) {
+            height = this.clientHeight;
+        }
+        
+        this.css("left", x - width / 2 + "px");
+        this.css("top", y - height / 2 + "px");
     }
 }
