@@ -89,22 +89,13 @@ function update(oldFunc, newFunc) {
 
 update(startFrom, startAfter);
 
-function $(targetName) {
-    var begin = targetName.chunk(1, 1);
-    var end = targetName.chunk(2, targetName.length);
-    var obj;
-    
-    if(begin === "#") {
-        obj = document.getElementById(end);
-    }
-    else if(begin === ".") {
-        obj = document.getElementsByClassName(end);
+object.$ = function(targetName) {
+    if(this.tagName) {
+        return this.querySelectorAll(targetName);
     }
     else {
-        obj = document.getElementsByTagName(targetName);
+        return document.querySelectorAll(targetName);
     }
-    
-    return obj;
 }
 
 function loop(func, delay) {
