@@ -21,6 +21,7 @@ object.css = function(property, value) {
     if(property[0] === ":") {
         var style = $("head")[0].create("style");
         style.innerHTML = this.tagName.toLowerCase() + property + " {" + value + "}";
+        return value;
     }
     else {
         eval("this." + property + " = " + value);
