@@ -1,12 +1,5 @@
 var object = Object.prototype;
 
-object.css = function(style, value) {
-    if(value) {
-        eval("this.style." + style + " = '" + String(value) + "'");
-    }
-    return eval("this.style." + style);
-}
-
 object.create = function(element) {
     if(this.tagName) {
         var obj;
@@ -21,6 +14,17 @@ object.create = function(element) {
         }
         this.appendChild(obj);
         return obj;
+    }
+}
+
+object.css = function(property, value) {
+    if(property[0] === ":") {
+        var style = $("head")[0].create("style");
+        style.innerHTML = this.tagName.toLowerCase() + property + " {" + value + "}";
+    }
+    else {
+        eval("this." + property + " = " + value);
+        return eval("this." + property);
     }
 }
 
