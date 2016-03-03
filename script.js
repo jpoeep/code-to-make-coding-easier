@@ -162,3 +162,11 @@ object.centerTo = function(x, y) { //align center of element to
         this.css("top", y - height / 2 + "px");
     }
 }
+
+Math.toRadians = function(degrees) {
+    return degrees * (Math.PI / 180);
+}
+
+Math.toDegrees = function(radians) {
+    return 180 / Math.PI * radians;
+}
