@@ -170,3 +170,17 @@ Math.toRadians = function(degrees) {
 Math.toDegrees = function(radians) {
     return 180 / Math.PI * radians;
 }
+
+object.html = function() {
+    if(this.tagName) {
+        return this.innerHTML;
+    }
+    else {
+        if(this == document) {
+            return document.documentElement.innerHTML;
+        }
+        else {
+            return null;
+        }
+    }
+}
