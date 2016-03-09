@@ -86,9 +86,9 @@ object.startAfter = function(string, pos) { // a function to break down a string
     return curString;
 }
 
-function update(oldFunc, newFunc) {
-    if(oldFunc) {
-        oldFunc = newFunc; // sets old function to the updated and changed iteration
+function update(oldVal, newVal) {
+    if(oldVal) {
+        oldVal = newVal; // sets old function to the updated and changed iteration
     }
 }
 
@@ -184,3 +184,5 @@ object.html = function() {
         }
     }
 }
+
+update(object.in, object.within);
