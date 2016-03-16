@@ -186,3 +186,9 @@ object.html = function() {
 }
 
 update(object.in, object.within);
+
+Storage.prototype.remove = function(valName) {
+    if(this.getItem(valName)) {
+        this.setItem(valName, null);
+    }
+}
