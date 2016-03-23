@@ -19,13 +19,13 @@ object.create = function(element) {
 
 object.css = function(property, value) {
     if(property[0] === ":") {
-        var style = $("head")[0].create("style");
+        var style = document.head.create("style");
         style.innerHTML = this.tagName.toLowerCase() + property + " {" + value + "}";
         return value;
     }
     else {
-        eval("this." + property + " = " + value);
-        return eval("this." + property);
+        eval("this.style." + property + " = '" + value + "'");
+        return eval("this.style." + property);
     }
 }
 
@@ -191,4 +191,39 @@ Storage.prototype.remove = function(valName) {
     if(this.getItem(valName)) {
         this.setItem(valName, null);
     }
+}
+
+object.clone = function(node) {
+    if(this.tagName && node.tagName) {
+        var clone = node.cloneNode();
+        this.appendChild(clone);
+        
+        return clone;
+    }
+}
+
+object.fadeIn = function(fade) {
+    if(!fade.background) {
+        fade.background = "black";
+    }
+    if(!fade.time) {
+        fade.time = 1;
+    }
+    if(!fade.opacity) {
+        fade.opacity = 1;
+    }
+    
+    var fadeLayer = this.create("div");
+    fadeLayer.css("position", "absolute");
+    fadeLayer.css("left", "0px");
+    fadeLayer.css("top", "0px");
+    fadeLayer.css("width", "100%");
+    fadeLayer.css("height", "100%");
+    fadeLayer.css("opacity", "0");
+    fadeLayer.css("background", fade.background);
+    fadeLayer.css("transition", "opacity " + fade.time + "s");
+    
+    setTimeout(function() {
+        fadeLayer.css("opacity", fade.opacity);
+    }, 0);
 }
