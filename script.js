@@ -203,6 +203,11 @@ object.clone = function(node) {
 }
 
 object.fadeIn = function(fade) {
+    var parent = this;
+    
+    if(!fade) {
+        fade = new Object();
+    }
     if(!fade.color) {
         fade.color = "black";
     }
@@ -212,8 +217,24 @@ object.fadeIn = function(fade) {
     if(!fade.opacity) {
         fade.opacity = 1;
     }
+    if(!fade.delay) {
+        fade.delay = 0;
+    }
+    
+    var prevLayer = false;
+    
+    if($(".fadeLayer")[0]) {
+        prevLayer = true;
+    }
+    else {
+        prevLayer = false;
+    }
     
     var fadeLayer = this.create("div");
+    fadeLayer.time = fade.time;
+    fadeLayer.opacity = fade.opacity;
+    fadeLayer.delay = fade.delay;
+    fadeLayer.className = "fadeLayer";
     fadeLayer.css("position", "absolute");
     fadeLayer.css("left", "0px");
     fadeLayer.css("top", "0px");
@@ -225,15 +246,24 @@ object.fadeIn = function(fade) {
     
     setTimeout(function() {
         fadeLayer.css("opacity", fade.opacity);
-    }, 0);
+        
+        if(prevLayer == true) {
+            setTimeout(function() {
+                parent.removeChild($(".fadeLayer")[0]);
+            }, fade.time * 1000);
+        }
+    }, fade.delay * 1000);
 }
 
 object.fadeOut = function(fade) {
-    for(var i = 0; i < $("body")[0].$(".fadeLayer").length; i++) {
+    for(var i = 0; i < $(".fadeLayer").length; i++) {
         var parent = this;
-        var layer = this.$(".fadeLayer")[i];
+        var layer = $(".fadeLayer")[i];
         if(!fade) {
             fade = new Object();
+        }
+        if(!fade.delay) {
+            fade.delay = layer.delay + layer.time;
         }
         if(!fade.time) {
             fade.time = layer.time;
@@ -245,14 +275,15 @@ object.fadeOut = function(fade) {
             fade.opacity = 0;
         }
         
-        layer.css("transition", "opacity " + fade.time + "s");
+        fade.opacity = String(fade.opacity);
         
         setTimeout(function() {
-            layer.css("opacity", String(fade.opacity));
+            layer.css("transition", "opacity " + fade.time + "s");
+            layer.css("opacity", fade.opacity);
             
             setTimeout(function() {
                 parent.removeChild(layer);
             }, fade.time * 1000);
-        }, 0);
+        }, fade.delay * 1000);
     }
 }
