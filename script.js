@@ -203,8 +203,8 @@ object.clone = function(node) {
 }
 
 object.fadeIn = function(fade) {
-    if(!fade.background) {
-        fade.background = "black";
+    if(!fade.color) {
+        fade.color = "black";
     }
     if(!fade.time) {
         fade.time = 1;
@@ -220,10 +220,39 @@ object.fadeIn = function(fade) {
     fadeLayer.css("width", "100%");
     fadeLayer.css("height", "100%");
     fadeLayer.css("opacity", "0");
-    fadeLayer.css("background", fade.background);
+    fadeLayer.css("background", fade.color);
     fadeLayer.css("transition", "opacity " + fade.time + "s");
     
     setTimeout(function() {
         fadeLayer.css("opacity", fade.opacity);
     }, 0);
+}
+
+object.fadeOut = function(fade) {
+    for(var i = 0; i < $("body")[0].$(".fadeLayer").length; i++) {
+        var parent = this;
+        var layer = this.$(".fadeLayer")[i];
+        if(!fade) {
+            fade = new Object();
+        }
+        if(!fade.time) {
+            fade.time = layer.time;
+        }
+        if(!fade.opacity) {
+            fade.opacity = 0;
+        }
+        if(fade.opacity > layer.opacity) {
+            fade.opacity = 0;
+        }
+        
+        layer.css("transition", "opacity " + fade.time + "s");
+        
+        setTimeout(function() {
+            layer.css("opacity", String(fade.opacity));
+            
+            setTimeout(function() {
+                parent.removeChild(layer);
+            }, fade.time * 1000);
+        }, 0);
+    }
 }
