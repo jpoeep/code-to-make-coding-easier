@@ -95,11 +95,18 @@ function update(oldVal, newVal) {
 update(startFrom, startAfter);
 
 object.$ = function(targetName) {
+    var query;
     if(this.tagName) {
-        return this.querySelectorAll(targetName);
+        query = this.querySelectorAll(targetName);
+    }
+    else if(this == (window || document)) {
+        query = document.querySelectorAll(targetName);
+    }
+    if(query.length == 1) {
+        return query[0];
     }
     else {
-        return document.querySelectorAll(targetName);
+        return query;
     }
 }
 
