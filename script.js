@@ -29,14 +29,11 @@ object.css = function(property, value) {
     }
 }
 
-object.on = function(event) {
-    var target = this;
-    
-    on.do = function(func) {
-        target.addEventListener(event, func);
-    };
-    
-    return on;
+object.on = function(evt, func) {
+    evt = evt.split(" ");
+    for(var i = 0; i < evt.length; i++) {
+        eval("this.on" + evt[i] + " = " + func);
+    }
 }
 
 object.within = function(parentString, caseSensitive) {
@@ -210,13 +207,14 @@ object.clone = function(node) {
 }
 
 object.fadeIn = function(fade) {
+    if(!this.tagName) {
+        return;
+    }
+    
     var parent = this;
     
     if(!fade) {
         fade = new Object();
-    }
-    if(!fade.color) {
-        fade.color = "black";
     }
     if(!fade.time) {
         fade.time = 1;
@@ -237,18 +235,27 @@ object.fadeIn = function(fade) {
         prevLayer = false;
     }
     
-    var fadeLayer = this.create("div");
+    var fadeLayer;
+    
+    if(typeof fade.color === "string") {
+        fadeLayer = this.create("div");
+        fadeLayer.className = "fadeLayer";
+        fadeLayer.css("position", "absolute");
+        fadeLayer.css("left", "0px");
+        fadeLayer.css("top", "0px");
+        fadeLayer.css("width", "100%");
+        fadeLayer.css("height", "100%");
+        fadeLayer.css("background", fade.color);
+    }
+    
+    else if(typeof fade.color != "string" && this.tagName) {
+        fadeLayer = this;
+    }
+    
     fadeLayer.time = fade.time;
     fadeLayer.opacity = fade.opacity;
     fadeLayer.delay = fade.delay;
-    fadeLayer.className = "fadeLayer";
-    fadeLayer.css("position", "absolute");
-    fadeLayer.css("left", "0px");
-    fadeLayer.css("top", "0px");
-    fadeLayer.css("width", "100%");
-    fadeLayer.css("height", "100%");
     fadeLayer.css("opacity", "0");
-    fadeLayer.css("background", fade.color);
     fadeLayer.css("transition", "opacity " + fade.time + "s");
     
     setTimeout(function() {
@@ -263,34 +270,38 @@ object.fadeIn = function(fade) {
 }
 
 object.fadeOut = function(fade) {
-    for(var i = 0; i < $(".fadeLayer").length; i++) {
-        var parent = this;
-        var layer = $(".fadeLayer")[i];
+    if(this.tagName) {
+        var element = this;
         if(!fade) {
             fade = new Object();
         }
-        if(!fade.delay) {
-            fade.delay = layer.delay + layer.time;
-        }
         if(!fade.time) {
-            fade.time = layer.time;
+            fade.time = 1;
         }
-        if(!fade.opacity) {
-            fade.opacity = 0;
-        }
-        if(fade.opacity > layer.opacity) {
-            fade.opacity = 0;
+        if(!fade.delay) {
+            fade.delay = 0;
         }
         
-        fade.opacity = String(fade.opacity);
+        var tran = this.css("transition");
+        if("opacity".in(tran) == true) {
+            var arr = tran.split(" ");
+            for(var i = 0; i < arr.length; i++) {
+                if(arr[i - 1] === "opacity") {
+                    arr[i] = fade.time + "s";
+                }
+            }
+            tran = arr.join(" ");
+        }
+        else {
+            tran += " opacity " + fade.time + "s";
+        }
         
         setTimeout(function() {
-            layer.css("transition", "opacity " + fade.time + "s");
-            layer.css("opacity", fade.opacity);
+            element.css("transition", tran);
             
             setTimeout(function() {
-                parent.removeChild(layer);
-            }, fade.time * 1000);
+                element.css("opacity", "0");
+            }, 0);
         }, fade.delay * 1000);
     }
 }
