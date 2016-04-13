@@ -17,15 +17,22 @@ object.create = function(element) {
     }
 }
 
-object.css = function(property, value) {
-    if(property[0] === ":") {
-        var style = document.head.create("style");
-        style.innerHTML = this.tagName.toLowerCase() + property + " {" + value + "}";
-        return value;
-    }
-    else {
-        eval("this.style." + property + " = '" + value + "'");
-        return eval("this.style." + property);
+object.css = function(style, value) {
+    if(style) {
+        var arr = style.split(" ");
+        for(var i = 0; i < arr.length; i++) {
+            if(arr[i][0] === ":") {
+            var css = document.head.create("style");
+            css.textContent = this.tagName.toLowerCase() + arr[i] + " {" + value + "}";
+            return value;
+        }
+            else {
+                if(value) {
+                    eval("this.style." + arr[i] + " = '" + value + "'");
+                }
+                return eval("this.style." + arr[i]);
+            }
+        }
     }
 }
 
@@ -304,4 +311,14 @@ object.fadeOut = function(fade) {
             }, 0);
         }, fade.delay * 1000);
     }
+}
+
+object.dataURL = function(callback) {
+    var read = new FileReader();
+    
+    read.onload = function() {
+        callback(read.result);
+    }
+    
+    read.readAsDataURL(this);
 }
