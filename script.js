@@ -19,19 +19,19 @@ object.create = function(element) {
 
 object.css = function(style, value) {
     if(style) {
-        var arr = style.split(" ");
-        for(var i = 0; i < arr.length; i++) {
-            if(arr[i][0] === ":") {
+        if(style[0] === ":") {
             var css = document.head.create("style");
             css.textContent = this.tagName.toLowerCase() + arr[i] + " {" + value + "}";
             return value;
         }
-            else {
-                if(value) {
+        else {
+            var arr = style.split(", ");
+            if(value) {
+                for(var i = 0; i < arr.length; i++) {
                     eval("this.style." + arr[i] + " = '" + value + "'");
                 }
-                return eval("this.style." + arr[i]);
             }
+            return eval("this.style." + arr[i]);
         }
     }
 }
