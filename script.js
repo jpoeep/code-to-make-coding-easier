@@ -43,7 +43,7 @@ object.on = function(evt, func) {
     }
 }
 
-object.within = function(parentString, caseSensitive) {
+object.in = function(parentString, caseSensitive) {
     if(caseSensitive == true) {
         return this === parentString;
     }
@@ -62,7 +62,7 @@ object.chunk = function(pos1, pos2) {
     return str;
 }
 
-object.startAfter = function(string, pos) { // a function to break down a string in segments based off of string arg
+object.startFrom = function(string, pos) { // a function to break down a string in segments based off of string arg
     var curString = this;
     var curPos = 0;
     if(!pos) {
@@ -89,14 +89,6 @@ object.startAfter = function(string, pos) { // a function to break down a string
                     
     return curString;
 }
-
-function update(oldVal, newVal) {
-    if(oldVal) {
-        oldVal = newVal; // sets old function to the updated and changed iteration
-    }
-}
-
-update(startFrom, startAfter);
 
 object.$ = function(targetName) {
     var query;
@@ -125,11 +117,9 @@ function loop(func, delay) {
     
     action();
     
-    action.stop = function() {
+    this.stop = function() {
         action = null;
     }
-    
-    return action;
 }
 
 function ElementNode(tagName, func) {
@@ -144,7 +134,7 @@ function ElementNode(tagName, func) {
     }, 0);
 }
 
-function pull(url) {
+function inc(url) {
     var ext = url.startAfter(".");
     var pullEnt;
     if(ext === "js") {
@@ -195,8 +185,6 @@ object.html = function() {
         }
     }
 }
-
-update(object.in, object.within);
 
 Storage.prototype.remove = function(valName) {
     if(this.getItem(valName)) {
@@ -322,3 +310,35 @@ object.dataURL = function(callback) {
     
     read.readAsDataURL(this);
 }
+
+object.properties = function() {
+    return Object.getOwnPropertyNames(this);
+}
+
+var allElements = [];
+
+object.addToElementList = function(arr) {
+    if(!arr) {
+        arr = allElements;
+    }
+    
+    for(var i = 0; i < this.childNodes.length; i++) {
+        if(this.childNodes[i].tagName) {
+            arr.push(this.childNodes[i]);
+            this.childNodes[i].addToArr();
+        }
+    }
+}
+
+loop(function() {
+    document.addToElementList();
+});
+
+loop(function() {
+    for(var i = 0; i < allElements.length; i++) {
+        var styles = $("body").style.properties();
+        for(var e = 0; e < styles.length; e++) {
+            eval("allElements[i]." + styles[e] + " = allElements[i].style." + styles[e]);
+        }
+    }
+});
