@@ -325,7 +325,7 @@ object.addToElementList = function(arr) {
     for(var i = 0; i < this.childNodes.length; i++) {
         if(this.childNodes[i].tagName) {
             arr.push(this.childNodes[i]);
-            this.childNodes[i].addToArr();
+            this.childNodes[i].addToElementList();
         }
     }
 }
