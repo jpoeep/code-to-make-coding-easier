@@ -337,8 +337,15 @@ loop(function() {
 loop(function() {
     for(var i = 0; i < allElements.length; i++) {
         var styles = $("body").style.properties();
-        for(var e = 0; e < styles.length; e++) {
-            eval("allElements[i]." + styles[e] + " = allElements[i].style." + styles[e]);
+        for(var s = 0; s < styles.length; s++) {
+            if(allElements[i].tagName && allElements[i][styles[s]]) {
+                allElements[i]["style"][styles[s]] = allElements[i][styles[s]];
+            }
+        }
+        for(var e = 0; e < Event.events.length; e++) {
+            if(allElements[i][Event.events[e]]) {
+                allElements[i]["on" + Event.events[e]] = allElements[i][Event.events[e]];
+            }
         }
     }
 });
