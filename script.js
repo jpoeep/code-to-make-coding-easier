@@ -107,7 +107,6 @@ object.$ = function(targetName) {
 }
 
 function loop(func, delay) {
-    delay *= 1000;
     
     function action() {
         func();
