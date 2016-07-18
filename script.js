@@ -348,3 +348,26 @@ loop(function() {
         }
     }
 });
+
+function XHR(path, callback) {
+    var xhr = new XMLHttpRequest();
+    
+    xhr.onreadystatechange = function() {
+        if(xhr.readyState == 4 && xhr.status == 200) {
+            callback(xhr.response);
+        }
+    };
+    
+    xhr.open("GET", path, true);
+    xhr.send();
+}
+
+funciton Json(str) {
+    return JSON.parse(str);
+}
+
+object.s = function(obj) {
+    for(var i = 0; i < obj.properties().length; i++) {
+        this.style[obj.properties()[i]] = obj[obj.properties()[i]];
+    }
+}
