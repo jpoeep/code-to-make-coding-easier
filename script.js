@@ -20,21 +20,22 @@ object.create = function(element) {
 object.css = function(style, value) {
     if(style) {
         if(style[0] === ":") {
-            var css = document.head.create("style");
-            css.textContent = this.tagName.toLowerCase() + arr[i] + " {" + value + "}";
-            return value;
+            var css = $("body").create("style");
+            css.innerHTML = this.tagName.toLowerCase() + style + " {" + value + "}";
         }
         else {
             var arr = style.split(", ");
             if(value) {
                 for(var i = 0; i < arr.length; i++) {
-                    eval("this.style." + arr[i] + " = '" + value + "'");
+                    this.style[arr[i]] = value;
                 }
             }
-            return eval("this.style." + arr[i]);
+            else if(!value) {
+                return this.style[style];
+            }
         }
     }
-}
+};
 
 object.on = function(evt, func) {
     evt = evt.split(" ");
@@ -370,4 +371,22 @@ object.s = function(obj) {
     for(var i = 0; i < obj.properties().length; i++) {
         this.style[obj.properties()[i]] = obj[obj.properties()[i]];
     }
+}
+
+function include(src) {
+    var script = [];
+    
+    for(var i = 0; i < src.length; i++) {
+        if(typeof src[i] === "string") {
+            if(src[i].indexOf("http") > -1 && navigator.onLine == false) {
+                return;
+            }
+            
+            var js = $("body").create("script");
+            js.src = src[i];
+            script.push(js);
+        }
+    }
+    
+    return script;
 }
