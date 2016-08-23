@@ -315,41 +315,6 @@ object.properties = function() {
     return Object.getOwnPropertyNames(this);
 }
 
-var allElements = [];
-
-object.addToElementList = function(arr) {
-    if(!arr) {
-        arr = allElements;
-    }
-    
-    for(var i = 0; i < this.childNodes.length; i++) {
-        if(this.childNodes[i].tagName) {
-            arr.push(this.childNodes[i]);
-            this.childNodes[i].addToElementList();
-        }
-    }
-}
-
-loop(function() {
-    document.addToElementList();
-});
-
-loop(function() {
-    for(var i = 0; i < allElements.length; i++) {
-        var styles = $("body").style.properties();
-        for(var s = 0; s < styles.length; s++) {
-            if(allElements[i].tagName && allElements[i][styles[s]]) {
-                allElements[i]["style"][styles[s]] = allElements[i][styles[s]];
-            }
-        }
-        for(var e = 0; e < Event.events.length; e++) {
-            if(allElements[i][Event.events[e]]) {
-                allElements[i]["on" + Event.events[e]] = allElements[i][Event.events[e]];
-            }
-        }
-    }
-});
-
 function XHR(path, callback) {
     var xhr = new XMLHttpRequest();
     
