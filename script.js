@@ -355,3 +355,19 @@ function include(src) {
     
     return script;
 }
+
+object.textNodes = function() {
+    var text = [];
+    
+    for(var i = 0; i < this.querySelectorAll("*").length; i++) {
+        var cur = this.querySelectorAll("*")[i];
+        
+        for(var e = 0; e < cur.childNodes.length; e++) {
+            if(cur.childNodes[e].nodeType == 3) {
+                text.push(cur.childNodes[e]);
+            }
+        }
+    }
+    
+    return text;
+};
