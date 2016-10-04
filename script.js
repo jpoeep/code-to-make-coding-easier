@@ -371,3 +371,30 @@ object.textNodes = function() {
     
     return text;
 };
+
+var Mouse = {
+    location: []
+};
+
+document.onmousemove = function(e) {
+    Mouse.location[0] = e.pageX;
+    Mouse.location[1] = e.pageY;
+    Mouse.target = e.target;
+};
+
+Mouse.click = function(x, y) {
+    if(!x || !y) {
+        Mouse.target.click();
+        Mouse.target.focus();
+    }
+    
+    else if(x && y && typeof (x && y) === "number") {
+        document.elementFromPoint(x, y).click();
+        document.elementFromPoint(x, y).focus();
+    }
+    
+    else if(typeof x === "object" && x.tagName) {
+        x.click();
+        x.focus();
+    }
+};
