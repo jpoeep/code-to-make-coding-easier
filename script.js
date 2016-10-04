@@ -383,7 +383,7 @@ document.onmousemove = function(e) {
 };
 
 Mouse.click = function(x, y) {
-    if(!x || !y) {
+    if(!x) {
         Mouse.target.click();
         Mouse.target.focus();
     }
