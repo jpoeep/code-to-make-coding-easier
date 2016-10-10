@@ -17,24 +17,8 @@ object.create = function(element) {
     }
 }
 
-object.css = function(style, value) {
-    if(style) {
-        if(style[0] === ":") {
-            var css = $("body").create("style");
-            css.innerHTML = this.tagName.toLowerCase() + style + " {" + value + "}";
-        }
-        else {
-            var arr = style.split(", ");
-            if(value) {
-                for(var i = 0; i < arr.length; i++) {
-                    this.style[arr[i]] = value;
-                }
-            }
-            else if(!value) {
-                return this.style[style];
-            }
-        }
-    }
+object.css = function(prop) {
+    return getComputedStyle(this).getPropertyValue(prop).split(", ");
 };
 
 object.on = function(evt, func) {
@@ -398,3 +382,9 @@ Mouse.click = function(x, y) {
         x.focus();
     }
 };
+
+function repeat(func, times) {
+    for(var i = 0; i < times; i++) {
+        func();
+    }
+}
