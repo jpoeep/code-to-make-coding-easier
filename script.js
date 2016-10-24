@@ -1,18 +1,15 @@
 var object = Object.prototype;
 
-object.create = function(element) {
+object.create = function(element, props) {
     if(this.tagName) {
-        var obj;
-        var dummyPos = element.indexOf("dummy");
-        if(dummyPos > -1) {
-            var name = element.substring("dummy".length, element.length);
-            obj = document.createElement(name);
-            obj.css("display", "none");
-        }
-        else {
-            obj = document.createElement(element);
-        }
+        var obj = document.createElement(element);
         this.appendChild(obj);
+        
+        for(var i = 0; i < Object.getOwnPropertyNames(obj).length; i++) {
+            var prop = Object.getOwnPropertyNames(obj)[i];
+            obj[prop] = props[prop];
+        }
+        
         return obj;
     }
 }
