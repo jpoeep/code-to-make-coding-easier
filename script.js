@@ -12,7 +12,7 @@ object.create = function(element, props) {
         
         return obj;
     }
-}
+};
 
 object.css = function(prop) {
     return getComputedStyle(this).getPropertyValue(prop).split(", ");
@@ -21,56 +21,9 @@ object.css = function(prop) {
 object.on = function(evt, func) {
     evt = evt.split(" ");
     for(var i = 0; i < evt.length; i++) {
-        eval("this.on" + evt[i] + " = " + func);
+        this[on + evt[i]] = func;
     }
-}
-
-object.in = function(parentString, caseSensitive) {
-    if(caseSensitive == true) {
-        return this === parentString;
-    }
-    else if(caseSensitive == (false || null)) {
-        return this.toLowerCase() === parentString.toLowerCase();
-    }
-}
-
-object.chunk = function(pos1, pos2) {
-    var str = "";
-    pos1 -= 1;
-    pos2 -= 1;
-    for(var i = pos1; i < pos2; i++) {
-        str += this[i];
-    }
-    return str;
-}
-
-object.startFrom = function(string, pos) { // a function to break down a string in segments based off of string arg
-    var curString = this;
-    var curPos = 0;
-    if(!pos) {
-        pos = "last";
-    }
-                    
-    function strCheck() {
-        if(string.within(curString) == true) {
-            if(pos === "last") {
-                curString = curString.chunk(curString.indexOf(string) + 2, curString.length);
-                strCheck();
-            }
-            else if(pos != "last" && typeof pos === "number" && pos != 0) {
-                curString = curString.chunk(curString.indexOf(string) + 2, curString.length);
-                curPos += 1;
-                if(curPos != pos) {
-                    strCheck();
-                }
-            }
-        }
-    }
-                    
-    strCheck();
-                    
-    return curString;
-}
+};
 
 object.$ = function(targetName) {
     var query;
@@ -86,7 +39,7 @@ object.$ = function(targetName) {
     else {
         return query;
     }
-}
+};
 
 function loop(func, delay) {
     
@@ -103,75 +56,63 @@ function loop(func, delay) {
     }
 }
 
-function ElementNode(tagName, func) {
+function ElementNode(tagName, action) {
     var tagCheck = loop(function() {
         var tag = document.getElementsByTagName(tagName);
         if(tag.length) {
             for(var i = 0; i < tag.length; i++) {
-                func(tag[i]);
+                for(var a = 0; a < action.length; a++) {
+                    if(typeof action[a] === "object" && Object.getOwnPropertyNames(action[a]).length) {
+                        for(var e = 0; e < Object.getOwnPropertyNames(action[a]).length; e++) {
+                            var prop = Object.getOwnPropertyNames(action[a])[e];
+                            tag[i][prop] = action[a][prop];
+                        }
+                    }
+                    
+                    else if(typeof action[a] === "function") {
+                        action[a](tag[i]);
+                    }
+                }
             }
+            
             tagCheck.stop();
         }
     }, 0);
 }
 
-function inc(url) {
-    var ext = url.startAfter(".");
-    var pullEnt;
-    if(ext === "js") {
-        pullEnt = $("body").create("script");
-        pullEnt.src = url;
-    }
-    if(ext === "css") {
-        pullEnt = $("body").create("link");
-        pullEnt.href = url;
-    }
-}
-
-object.centerTo = function(x, y) { //align center of element to 
-    if(this.position != (null || "static")) {
-        var width = parseInt(this.css("width"));
-        var height = parseInt(this.css("height"));
-        
-        if(width == null) {
-            width = this.clientWidth;
-        }
-        if(height == null) {
-            height = this.clientHeight;
+object.html = function(str) {
+    if(!str) {
+        if(this.tagName) {
+            return this.innerHTML;
         }
         
-        this.css("left", x - width / 2 + "px");
-        this.css("top", y - height / 2 + "px");
-    }
-}
-
-Math.toRadians = function(degrees) {
-    return degrees * (Math.PI / 180);
-}
-
-Math.toDegrees = function(radians) {
-    return 180 / Math.PI * radians;
-}
-
-object.html = function() {
-    if(this.tagName) {
-        return this.innerHTML;
-    }
-    else {
-        if(this == document) {
-            return document.documentElement.innerHTML;
-        }
         else {
-            return null;
+            if(this == document) {
+                return document.documentElement.innerHTML;
+            }
+            
+            else {
+                return null;
+            }
         }
     }
-}
+    
+    else if(str) {
+        if(this == document) {
+            document.documentElement.innerHTML = str;
+        }
+        
+        else if(this != document && this.tagName){
+            this.innerHTML = str;
+        }
+    }
+};
 
 Storage.prototype.remove = function(valName) {
     if(this.getItem(valName)) {
         this.setItem(valName, null);
     }
-}
+};
 
 object.clone = function(node) {
     if(this.tagName && node.tagName) {
@@ -180,121 +121,11 @@ object.clone = function(node) {
         
         return clone;
     }
-}
-
-object.fadeIn = function(fade) {
-    if(!this.tagName) {
-        return;
-    }
-    
-    var parent = this;
-    
-    if(!fade) {
-        fade = new Object();
-    }
-    if(!fade.time) {
-        fade.time = 1;
-    }
-    if(!fade.opacity) {
-        fade.opacity = 1;
-    }
-    if(!fade.delay) {
-        fade.delay = 0;
-    }
-    
-    var prevLayer = false;
-    
-    if($(".fadeLayer")[0]) {
-        prevLayer = true;
-    }
-    else {
-        prevLayer = false;
-    }
-    
-    var fadeLayer;
-    
-    if(typeof fade.color === "string") {
-        fadeLayer = this.create("div");
-        fadeLayer.className = "fadeLayer";
-        fadeLayer.css("position", "absolute");
-        fadeLayer.css("left", "0px");
-        fadeLayer.css("top", "0px");
-        fadeLayer.css("width", "100%");
-        fadeLayer.css("height", "100%");
-        fadeLayer.css("background", fade.color);
-    }
-    
-    else if(typeof fade.color != "string" && this.tagName) {
-        fadeLayer = this;
-    }
-    
-    fadeLayer.time = fade.time;
-    fadeLayer.opacity = fade.opacity;
-    fadeLayer.delay = fade.delay;
-    fadeLayer.css("opacity", "0");
-    fadeLayer.css("transition", "opacity " + fade.time + "s");
-    
-    setTimeout(function() {
-        fadeLayer.css("opacity", fade.opacity);
-        
-        if(prevLayer == true) {
-            setTimeout(function() {
-                parent.removeChild($(".fadeLayer")[0]);
-            }, fade.time * 1000);
-        }
-    }, fade.delay * 1000);
-}
-
-object.fadeOut = function(fade) {
-    if(this.tagName) {
-        var element = this;
-        if(!fade) {
-            fade = new Object();
-        }
-        if(!fade.time) {
-            fade.time = 1;
-        }
-        if(!fade.delay) {
-            fade.delay = 0;
-        }
-        
-        var tran = this.css("transition");
-        if("opacity".in(tran) == true) {
-            var arr = tran.split(" ");
-            for(var i = 0; i < arr.length; i++) {
-                if(arr[i - 1] === "opacity") {
-                    arr[i] = fade.time + "s";
-                }
-            }
-            tran = arr.join(" ");
-        }
-        else {
-            tran += " opacity " + fade.time + "s";
-        }
-        
-        setTimeout(function() {
-            element.css("transition", tran);
-            
-            setTimeout(function() {
-                element.css("opacity", "0");
-            }, 0);
-        }, fade.delay * 1000);
-    }
-}
-
-object.dataURL = function(callback) {
-    var read = new FileReader();
-    
-    read.onload = function() {
-        callback(read.result);
-    }
-    
-    read.readAsDataURL(this);
-}
+};
 
 object.properties = function() {
     return Object.getOwnPropertyNames(this);
-}
+};
 
 function XHR(path, callback) {
     var xhr = new XMLHttpRequest();
@@ -309,32 +140,10 @@ function XHR(path, callback) {
     xhr.send();
 }
 
-funciton Json(str) {
-    return JSON.parse(str);
-}
-
 object.s = function(obj) {
     for(var i = 0; i < obj.properties().length; i++) {
         this.style[obj.properties()[i]] = obj[obj.properties()[i]];
     }
-}
-
-function include(src) {
-    var script = [];
-    
-    for(var i = 0; i < src.length; i++) {
-        if(typeof src[i] === "string") {
-            if(src[i].indexOf("http") > -1 && navigator.onLine == false) {
-                return;
-            }
-            
-            var js = $("body").create("script");
-            js.src = src[i];
-            script.push(js);
-        }
-    }
-    
-    return script;
 }
 
 object.textNodes = function() {
@@ -388,4 +197,68 @@ function repeat(func, times) {
 
 object.ready = function(callback) {
     this.onload = callback;
+};
+
+object.toggle = function(prop, arr) {
+    if(typeof arr === "string" || typeof arr === "number" || (typeof arr === "object" && arr.length == 1)) {
+        if(typeof arr === "object") {
+            arr = arr[0];
+        }
+        
+        if(this[prop] && this[prop] != arr) {
+            this["prev" + prop] = this[prop];
+        }
+        
+        if(this[prop] == arr) {
+            this[prop] = this["prev" + prop];
+        }
+        
+        else if(this[prop] == this["prev" + prop]) {
+            this[prop] = arr;
+        }
+    }
+    
+    else {
+        if(this[prop] == arr[0]) {
+            this[prop] = arr[1];
+        }
+        
+        else if(this[prop] == arr[1]) {
+            this[prop] = arr[0];
+        }
+        
+        else {
+            this[prop] = arr[0];
+        }
+    }
+};
+
+object.toggleClass = function(cls1, cls2) {
+    if(cls1 && !cls2) {
+        if(this.className && this.className !== cls1) {
+            this.prevClass = this.className;
+        }
+        
+        if(this.className === cls1) {
+            this.className = this.prevClass;
+        }
+        
+        else {
+            this.className = cls1;
+        }
+    }
+    
+    else if(cls1 && cls2) {
+        if(this.className === cls1) {
+            this.className = cls2;
+        }
+        
+        else if(this.className === cls2) {
+            this.className = cls1;
+        }
+        
+        else {
+            this.className = cls1;
+        }
+    }
 };
