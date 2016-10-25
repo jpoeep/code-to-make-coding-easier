@@ -385,3 +385,7 @@ function repeat(func, times) {
         func();
     }
 }
+
+object.ready = function(callback) {
+    this.onload = callback;
+};
