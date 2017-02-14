@@ -262,3 +262,30 @@ object.toggleClass = function(cls1, cls2) {
         }
     }
 };
+
+function Animation(func, speed) {
+  var stopAnim = 0;
+  
+  var a = this;
+  
+  if(!this.speed) {
+    this.speed = 0;
+  }
+  
+  this.start = function() {
+      stopAnim = 0;
+
+      function init(time) {
+          if(stopAnim === 0) {
+              func(time * a.speed);
+              requestAnimationFrame(init);
+          }
+      }
+
+      requestAnimationFrame(init);
+  };
+
+  this.stop = function() {
+      stopAnim = 1;
+  };
+}
