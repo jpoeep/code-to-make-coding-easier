@@ -163,30 +163,18 @@ object.textNodes = function() {
 };
 
 var Mouse = {
-    location: []
+    coords: "unavailable",
+    target: "unavailable"
 };
 
 document.onmousemove = function(e) {
-    Mouse.location[0] = e.pageX;
-    Mouse.location[1] = e.pageY;
+    Mouse.coords = [e.pageX, e.pageY];
     Mouse.target = e.target;
 };
 
 Mouse.click = function(x, y) {
-    if(!x) {
-        Mouse.target.click();
-        Mouse.target.focus();
-    }
-    
-    else if(x && y && typeof (x && y) === "number") {
-        document.elementFromPoint(x, y).click();
-        document.elementFromPoint(x, y).focus();
-    }
-    
-    else if(typeof x === "object" && x.tagName) {
-        x.click();
-        x.focus();
-    }
+    Mouse.target.click();
+    Mouse.target.focus();
 };
 
 function repeat(func, times) {
@@ -289,3 +277,26 @@ function Animation(func, speed) {
       stopAnim = 1;
   };
 }
+
+if(!watch) {
+    object.watch = function(prop, func) {
+        var t = this;
+        var prevVal = this[prop];
+
+        loop(function() {
+            if(prevVal !== t[prop]) {
+                func({
+                    oldValue: prevVal,
+                    value: t[prop]
+                });
+                prevVal = t[prop];
+            }
+        });
+    };
+}
+
+/* Here's an example of .watch()
+Mouse.watch("coords", function(e) {
+  console.log([e.oldValue, e.value]);
+  console.log("Do something once mouse position has changed"); onmousemove should be used for this but this is an example
+});*/
