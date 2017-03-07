@@ -300,3 +300,25 @@ Mouse.watch("coords", function(e) {
   console.log([e.oldValue, e.value]);
   console.log("Do something once mouse position has changed"); onmousemove should be used for this but this is an example
 });*/
+
+object.forEach = function(cb) {
+    for(var i = 0; i < this.length; i++) {
+        cb(this[i]);
+    }
+};
+
+/* Example code:
+document.body.childNodes.forEach(function(children) {
+    console.log(children.tagName); this would log the tagName of every childNode in the body
+});
+*/
+
+Array.prototype.swap = function(num1, num2) {
+    var temp = this[num1];
+    this[num1] = this[num2];
+    this[num2] = temp;
+    return this;
+};
+
+//[1, 2].swap(0, 1); returns [2, 1]
+//document.all.swap(3, 1); returns document.all with the 4th and 2nd value swapped
