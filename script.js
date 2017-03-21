@@ -322,3 +322,17 @@ Array.prototype.swap = function(num1, num2) {
 
 //[1, 2].swap(0, 1); returns [2, 1]
 //document.all.swap(3, 1); returns document.all with the 4th and 2nd value swapped
+
+Object.prototype.watchValue = function(prop, cb) {
+    let tar = this;
+    
+    let valCheck = new loop(() => {
+        if(tar["old" + prop] != tar[prop]) {
+            cb(tar[prop]);
+        }
+        
+        else if(tar["old" + prop] == tar[prop]) {
+            return;
+        }
+    });
+};
