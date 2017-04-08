@@ -336,3 +336,7 @@ Object.prototype.watchValue = function(prop, cb) {
         }
     });
 };
+
+Element.prototype.position = function(x, y) {
+    return "translate(" + -this.offsetLeft + x + "px, " + -this.offsetTop + y + "px)";
+};
