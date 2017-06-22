@@ -301,7 +301,7 @@ Mouse.watch("coords", function(e) {
   console.log("Do something once mouse position has changed"); onmousemove should be used for this but this is an example
 });*/
 
-object.forEach = function(cb) {
+object.each = function(cb) {
     for(var i = 0; i < this.length; i++) {
         cb(this[i]);
     }
@@ -337,6 +337,70 @@ Object.prototype.watchValue = function(prop, cb) {
     });
 };
 
-Element.prototype.position = function(x, y) {
-    return "translate(" + -this.offsetLeft + x + "px, " + -this.offsetTop + y + "px)";
+Element.prototype.move = function(x, y) {
+    this.s({
+        transform: "translate(" + (-this.offsetLeft + x) + "px, " + (-this.offsetTop + y) + "px)"
+    });
 };
+
+String.prototype.splitEvery = function(n) {
+    var arr = []
+
+    for(var i = 0; i < Math.ceil(this.length / n); i++) {
+        arr.push(this.substring(i * n, i * n + n))
+    }
+
+    return arr
+}
+
+function transitionColorArr(obj) {
+    this.c1 = obj.c1
+    this.c2 = obj.c2
+    this.steps = obj.steps
+    function convert(val) {
+        if(typeof val == "string") {
+            var arr = val.splitEvery(2)
+      
+            for(let i in arr) {
+                arr[i] = parseInt(arr[i], 16)
+            }
+      
+            return arr
+        }
+    
+        else if(Array.isArray(val) === true) {
+            for(let i in val) {
+                val[i] = Math.round(Math.pow(16, 2) * (val[i] / 255)).toString(16)
+                if(String(val[i]).length == 1) {
+                    val[i] = "0" + val[i]
+                }
+            }
+      
+            return val.join("")
+        }
+    }
+
+    if(obj.steps >= 2) {
+        var arr = []
+        arr[0] = obj.c1
+        arr[obj.steps - 1] = obj.c2
+
+        for(let i = 1; i < obj.steps - 1; i++) {
+            var prev = arr[i - 1]
+
+            var dif = {
+                r: (convert(obj.c2)[0] - convert(obj.c1)[0]) / obj.steps,
+                g: (convert(obj.c2)[1] - convert(obj.c1)[1]) / obj.steps,
+                b: (convert(obj.c2)[2] - convert(obj.c1)[2]) / obj.steps
+            }
+
+            var r = convert(prev)[0] + dif.r
+            var g = convert(prev)[1] + dif.g
+            var b = convert(prev)[2] + dif.b
+
+            arr[i] = convert([r, g, b])
+        }
+
+        return arr
+    }
+}
